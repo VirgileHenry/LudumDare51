@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +6,18 @@ public class Planet : MonoBehaviour
 {
     PlanetTile[] tiles;
     public Material planetMaterial; 
+    // prefabs
+    public GameObject rockPrefab;
+    public GameObject geyserPrefab;
+
+    public static Planet instance;
+
+    private void Awake()
+    {
+        if(instance == null) {
+            instance = this;
+        }
+    }
 
     // creates a new planet
     public void Start()
@@ -66,7 +77,7 @@ public class Planet : MonoBehaviour
         }
         
         foreach(PlanetTile tile in tiles) {
-            tile.GenerateTriangle(planetMaterial);
+            tile.GenerateTile(planetMaterial);
         }
     }
 
@@ -93,14 +104,18 @@ public class Planet : MonoBehaviour
 
     private IEnumerator CollapseAnimation(PlanetTile tile, float duration) {
         float timer = 0;
-        Vector3 oldPos = tile.tileObject.transform.position;
+        Vector3 oldPos = tile.tileGameObject.transform.position;
         Vector3 targetPos = (tile.coordinates.v1 + tile.coordinates.v1 + tile.coordinates.v1).normalized * 0.5f;
         while(timer < duration) {
-            tile.tileObject.transform.position = oldPos + (timer / duration) * (targetPos - oldPos);
+            tile.tileGameObject.transform.position = oldPos + (timer / duration) * (targetPos - oldPos);
 
             duration += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    public static GameObject InstantiateGameObject(GameObject prefab) {
+        return Instantiate(prefab);
     }
 }
 
@@ -125,16 +140,24 @@ public enum TileState {
     Collapsed,
 }
 
+public enum TileGameObject {
+    None,
+    Geyser,
+    SpaceShip,
+}
+
 // a tile of a planet
 public class PlanetTile
 {
     public TileState state;
     public Tilecoordinates coordinates;
-    public GameObject tileObject;
+    public GameObject tileGameObject;
+    public TileGameObject tileObj;
 
     public PlanetTile(Tilecoordinates coordinates) {
         this.coordinates = coordinates;
         this.state = TileState.Alive;
+        this.tileObj = Random.Range(0f, 1f) < 0.05f ? TileGameObject.Geyser : TileGameObject.None;
     }
 
     // divide the tile in 4 smaller tiles and returns them
@@ -155,11 +178,11 @@ public class PlanetTile
         return $"{coordinates.v1} {coordinates.v2} {coordinates.v3}";
     }
 
-    public void GenerateTriangle(Material material) {
-        tileObject = new GameObject();
-        tileObject.name = "debug triangle";
-        MeshFilter filter = tileObject.AddComponent<MeshFilter>();
-        tileObject.AddComponent<MeshRenderer>().material = material;
+    public void GenerateTile(Material material) {
+        tileGameObject = new GameObject();
+        tileGameObject.name = "debug triangle";
+        MeshFilter filter = tileGameObject.AddComponent<MeshFilter>();
+        tileGameObject.AddComponent<MeshRenderer>().material = material;
         Mesh mesh = new Mesh();
         Vector3 normal = (coordinates.v1 + coordinates.v2 + coordinates.v3).normalized;
         mesh.vertices = new Vector3[6] {
@@ -171,12 +194,12 @@ public class PlanetTile
             coordinates.v3 * 0.5f,
         };
         mesh.normals = new Vector3[6] {
-            normal,
-            normal,
-            normal,
-            normal,
-            normal,
-            normal,
+            (coordinates.v1).normalized,
+            (coordinates.v2).normalized,
+            (coordinates.v3).normalized,
+            (coordinates.v1 * 0.5f).normalized,
+            (coordinates.v2 * 0.5f).normalized,
+            (coordinates.v3 * 0.5f).normalized,
         };
         mesh.triangles = new int[21] {
             0, 1, 2,
@@ -188,6 +211,43 @@ public class PlanetTile
             2, 5, 3
         };
         filter.mesh = mesh;
+        // add artifacts rocks
+        int rockNumber = new int[5]{0, 1, 1, 2, 4}[Random.Range(0, 5)];
+
+        for(int i = 0; i < rockNumber; i++) {
+            GameObject newRock = Planet.InstantiateGameObject(Planet.instance.rockPrefab);
+            // random position
+            float a = Random.Range(0f, 1f);
+            float b = Random.Range(0f, 1-a);
+            float c = 1 - a - b;
+            newRock.transform.position = a * coordinates.v1 + b * coordinates.v2 + c * coordinates.v3;
+            a = Random.Range(0f, 1f);
+            b = Random.Range(0f, 1-a);
+            c = 1 - a - b;
+            Vector3 randomForward = (a * coordinates.v1 + b * coordinates.v2 + c * coordinates.v3) - newRock.transform.position;
+            Vector3 up = (coordinates.v1 +coordinates.v2 + coordinates.v3).normalized;
+            newRock.transform.rotation = Quaternion.LookRotation(randomForward, up);
+            float x = Random.Range(0.5f, 1f);
+            newRock.transform.localScale = Vector3.one * x * x;
+            newRock.transform.SetParent(tileGameObject.transform, true);
+        }
+
+        if(this.tileObj == TileGameObject.Geyser) {
+            // generate a geyser
+            GameObject geyser = Planet.InstantiateGameObject(Planet.instance.geyserPrefab);
+            Vector3 center = (coordinates.v1 +coordinates.v2 +coordinates.v3) / 3f;
+            float a = Random.Range(0f, 1f);
+            float b = Random.Range(0f, 1-a);
+            float c = 1 - a - b;
+            Vector3 randomForward = (a * coordinates.v1 + b * coordinates.v2 + c * coordinates.v3) - center;
+            Vector3 up = (coordinates.v1 + coordinates.v2 + coordinates.v3).normalized;
+            geyser.transform.position = center;
+            geyser.transform.rotation = Quaternion.LookRotation(randomForward, up);
+            geyser.transform.SetParent(tileGameObject.transform, true);
+
+        }
+
+
     }
 
     public void Collapse() {
