@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
 
+    public Bar fuelBar;
+    public Bar sismicBar;
+
     private void Awake() {
         if(instance == null) {
             instance = this;
@@ -52,6 +55,7 @@ public class GameManager : MonoBehaviour
         while(currentState == GameState.Playing) {
             // wait 10 sec ! (this is the game jam theme, I mean...)
             timer += Time.deltaTime;
+            sismicBar.Set(timer / 10.0f);
             if(timer > 10) {
                 timer = 0;
                 // handle planet tile collapse
