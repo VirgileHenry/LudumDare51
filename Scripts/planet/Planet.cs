@@ -14,6 +14,8 @@ public class Planet : MonoBehaviour
 
     public static Planet instance;
 
+    public Transform mainParent;
+
     private void Awake()
     {
         if(instance == null) {
@@ -24,6 +26,17 @@ public class Planet : MonoBehaviour
     // creates a new planet
     public void Start()
     {
+        GeneratePlanet();
+    }
+
+    public void ResetPlanet() {
+        Destroy(mainParent.gameObject); // clear everything
+        GeneratePlanet();
+    }
+
+    private void GeneratePlanet() {
+        mainParent = new GameObject().transform;
+
         Vector3[] icoVerts = new Vector3[12] {
             Vector3.up,
             Vector3.zero,
@@ -79,13 +92,13 @@ public class Planet : MonoBehaviour
         }
         
         foreach(PlanetTile tile in tiles) {
-            tile.GenerateTile(planetMaterial, undergroundMaterial);
+            tile.GenerateTile(planetMaterial, undergroundMaterial, mainParent);
         }
 
         // generate the spaceship !
         foreach (GameObject spaceshipPartPrefab in spaceshipPrefabs)
         {
-            GameObject spaceshipPart = Instantiate(spaceshipPartPrefab);
+            GameObject spaceshipPart = Instantiate(spaceshipPartPrefab, mainParent);
             PlanetTile tile = tiles[Random.Range(0, tiles.Length)];
             while(tile.tileObj != TileGameObject.None) {
                 tile = tiles[Random.Range(0, tiles.Length)];
@@ -101,6 +114,7 @@ public class Planet : MonoBehaviour
             spaceshipPart.transform.rotation = Quaternion.LookRotation(randomForward, up);
 
         }
+
     }
 
     public void UpdateTilesStates() {
@@ -196,8 +210,9 @@ public class PlanetTile
         return $"{coordinates.v1} {coordinates.v2} {coordinates.v3}";
     }
 
-    public void GenerateTile(Material material, Material groundMaterial) {
+    public void GenerateTile(Material material, Material groundMaterial, Transform parent) {
         tileGameObject = new GameObject();
+        tileGameObject.transform.SetParent(parent);
         tileGameObject.name = "Planet Tile";
         MeshFilter filter = tileGameObject.AddComponent<MeshFilter>();
         tileGameObject.AddComponent<MeshRenderer>().material = material;

@@ -58,7 +58,7 @@ public class PlayerHolding : MonoBehaviour
                 }
                 else {
                     // put the spaceship down
-                    holdedObject.transform.SetParent(null);
+                    holdedObject.transform.SetParent(Planet.instance.mainParent);
                     holdedObject.GetComponent<SphereCollider>().enabled = true;
                     currentState = HoldingState.Empty;
                     holdedObject = null;

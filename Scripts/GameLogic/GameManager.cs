@@ -19,6 +19,17 @@ public class GameManager : MonoBehaviour
     GameObject player;
     public Camera menuCamera;
 
+    public GameObject victoryScreen;
+    public GameObject defeatScreen;
+
+    public static GameManager instance;
+
+    private void Awake() {
+        if(instance == null) {
+            instance = this;
+        }
+    }
+
     private void Start() {
         currentState = GameState.Menu;
     }
@@ -32,7 +43,7 @@ public class GameManager : MonoBehaviour
         currentState = GameState.CutScene;
         // todo
 
-        player = Instantiate(playerPrefab);
+        player = Instantiate(playerPrefab, Planet.instance.mainParent);
         menuCamera.enabled = false;
         // main game loop
         currentState = GameState.Playing;
@@ -50,7 +61,20 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         // handle defeat
+        if(currentState == GameState.Defeat) {
+            // todo : cutscene !
+            Destroy(player);
+            menuCamera.enabled = true;
+            defeatScreen.SetActive(true);
+        }
+
         // handle victory
+        if(currentState == GameState.Victory) {
+            // todo : cutscene !
+            Destroy(player);
+            menuCamera.enabled = true;
+            victoryScreen.SetActive(true);
+        }
     }
 
     public void PlayerDefeat() {
@@ -59,5 +83,14 @@ public class GameManager : MonoBehaviour
 
     public void PlayerVictory() {
         currentState = GameState.Victory;
+    }
+
+    public void ResetGame() {
+        if(player != null) {
+            Destroy(player);
+        }
+        menuCamera.enabled = true;
+        currentState = GameState.Menu;
+        Planet.instance.ResetPlanet();
     }
 }
