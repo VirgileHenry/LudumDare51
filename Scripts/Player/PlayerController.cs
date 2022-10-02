@@ -14,7 +14,11 @@ public class PlayerController : MonoBehaviour
     public float angle = 0f;
 
     public float max_fuel = 5f;
-    
+
+    public Vector3 shakeAmplidtude;
+    public float shakeDuration;
+    public float shakeSpeed;
+
     [Range(0, 1)]
     public float mvt_responsivity = 1f;
     
@@ -32,6 +36,9 @@ public class PlayerController : MonoBehaviour
     public float deatRaycastDistance = 0.1f;
 
     public bool disabled;
+    private float fallout;
+
+    private float last_shake_event;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +50,11 @@ public class PlayerController : MonoBehaviour
         holder = this.GetComponent<PlayerHolding>();
 
         disabled = false;
+    }
+
+    public void ShakeCamera()
+    {
+        last_shake_event = Time.time;
     }
 
     // Update is called once per frame
@@ -59,7 +71,15 @@ public class PlayerController : MonoBehaviour
         Quaternion toward_body_quat = body.rotation;
         Quaternion offset_quat = Quaternion.AngleAxis(camera_rot_offset.x, body.right);
 
-        Camera.rotation = Quaternion.AngleAxis(180f, body.up) * offset_quat * toward_body_quat;
+        float shake_time = Time.time - last_shake_event;
+        fallout = shake_time * Mathf.Exp(-shake_time/shakeDuration);
+        Vector3 shake = fallout * new Vector3(Mathf.PerlinNoise(shakeSpeed * Time.time, 0f),
+            Mathf.PerlinNoise(shakeSpeed * Time.time, 7f),
+            Mathf.PerlinNoise(shakeSpeed * Time.time, 13f));
+        shake = Vector3.Scale(shake, shakeAmplidtude);
+        Quaternion offset_shake = Quaternion.Euler(shake);
+
+        Camera.rotation = offset_shake * Quaternion.AngleAxis(180f, body.up) * offset_quat * toward_body_quat;
 
         Vector3 camera_desired_pos = body.position + camera_pos_offset.x * Camera.forward + camera_pos_offset.y * Camera.up;
 

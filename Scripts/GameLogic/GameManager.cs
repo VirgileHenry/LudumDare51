@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
             sismicBar.Set(timer / 10.0f);
             if(timer > 10) {
                 timer = 0;
+                player.GetComponent<PlayerController>().ShakeCamera();
                 // handle planet tile collapse
                 Planet.instance.UpdateTilesStates();
             }
