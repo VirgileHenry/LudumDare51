@@ -10,6 +10,7 @@ public class PlayerHolding : MonoBehaviour
         Spaceship,
     }
 
+    public float persistance = 0.9f;
     public HoldingState currentState;
     public Transform holdingSpot;
     public float grabRadius = 0.05f;
@@ -35,7 +36,7 @@ public class PlayerHolding : MonoBehaviour
                 // try to grab something !
                 foreach(Collider collider in Physics.OverlapSphere(holdingSpot.position, grabRadius, 1 << 8, QueryTriggerInteraction.Collide)) {
                     collider.gameObject.transform.SetParent(holdingSpot);
-                    collider.gameObject.transform.localPosition = Vector3.zero;
+                    collider.gameObject.transform.localPosition *= persistance;
                     collider.gameObject.GetComponent<SphereCollider>().enabled = false;
                     holdedObject = collider.gameObject;
                     currentState = HoldingState.Spaceship;
