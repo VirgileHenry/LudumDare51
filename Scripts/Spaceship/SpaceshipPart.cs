@@ -19,5 +19,6 @@ public class SpaceshipPart : MonoBehaviour
 
     private void SpaceshipComplete() {
         // todo: victory
+        Debug.Log("Victory !");
     }
 }

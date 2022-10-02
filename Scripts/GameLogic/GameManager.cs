@@ -15,10 +15,12 @@ public class GameManager : MonoBehaviour
     }
 
     GameState currentState;
+    public GameObject playerPrefab;
+    GameObject player;
+    public Camera menuCamera;
 
     private void Start() {
         currentState = GameState.Menu;
-        StartGame();
     }
 
     public void StartGame() {
@@ -27,9 +29,11 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator MainGameLoop() {
         // intro animation
-        currentState = GameState.Menu;
+        currentState = GameState.CutScene;
         // todo
 
+        player = Instantiate(playerPrefab);
+        menuCamera.enabled = false;
         // main game loop
         currentState = GameState.Playing;
         float timer = 0; // start at negative if need time at the beginning !
