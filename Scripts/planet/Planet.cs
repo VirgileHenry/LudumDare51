@@ -258,7 +258,7 @@ public class PlanetTile
         groundObj.AddComponent<MeshFilter>().mesh = groundMesh;
         groundObj.AddComponent<MeshRenderer>().material = groundMaterial;
         // add artifacts rocks
-        int rockNumber = new int[5]{0, 1, 1, 2, 4}[Random.Range(0, 5)];
+        int rockNumber = new int[8]{0, 1, 1, 2, 2, 2, 4, 4}[Random.Range(0, 8)];
 
         for(int i = 0; i < rockNumber; i++) {
             GameObject newRock = Planet.InstantiateGameObject(Planet.instance.rockPrefab);
