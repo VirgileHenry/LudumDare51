@@ -9,14 +9,11 @@ public class PlayerController : MonoBehaviour
 
     public float speed = 1f;
     public float ang_speed = 1f;
-    public float gravity_intensity = 1f;
 
     public float angle = 0f;
     
     [Range(0, 1)]
     public float mvt_responsivity = 1f;
-    [Range(0, 1)]
-    public float rot_responsivity = 1f;
     
     public Vector2 camera_pos_offset = new Vector2(0, 0);
     public Vector2 camera_rot_offset = new Vector2(0, 0);
