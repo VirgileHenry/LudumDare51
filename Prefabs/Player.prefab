@@ -235,10 +235,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d3ac7c079146641a6bbd000913be75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.3
+  speed: 0.25
   carryingSpeed: 0.15
-  ang_speed: 1
-  angle: 0
+  ang_speed: 90
   max_fuel: 5
   shakeAmplidtude: {x: 20, y: 50, z: 60}
   shakeDuration: 0.3

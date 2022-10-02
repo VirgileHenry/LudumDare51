@@ -1,4 +1,3 @@
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -86,7 +85,21 @@ public class GameManager : MonoBehaviour
         // handle victory
         if(currentState == GameState.Victory) {
             // todo : cutscene !
+            // move camera to spaceship nicely
+            Transform camTf = player.GetComponentInChildren<Camera>().transform;
+            camTf.SetParent(EndAnimation.instance.cameraPos, true);
             Destroy(player);
+            float camtimer = 0;
+            Vector3 camPos = camTf.localPosition;
+            Quaternion camRot = camTf.localRotation;
+            while(camtimer < 1) {
+                camTf.localPosition = (1 - camtimer) * camPos;
+                camTf.localRotation = Quaternion.Lerp(camRot, Quaternion.identity, camtimer);
+                camtimer += Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+            EndAnimation.instance.Launch();
+            yield return new WaitForSeconds(5f);
             menuCamera.enabled = true;
             victoryScreen.SetActive(true);
             gameUiPanel.SetActive(false);

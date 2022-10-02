@@ -394,8 +394,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'You, a little robot named 0x-176, juste crashed on a planet. Your ship
     broke appart, and you need an escape quickly : the planet is collapsing ! Move
-    around with [wasd] or [the arrows], grab the spaceship''s pieces with [spacebar],
-    assemble your ship and leave while you can !'
+    around with [wasd], grab the spaceship''s pieces with [spacebar], assemble your
+    ship, refuel it with the geysers and leave while you can !'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

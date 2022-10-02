@@ -11,8 +11,6 @@ public class PlayerController : MonoBehaviour
     public float carryingSpeed = 1f;
     public float ang_speed = 1f;
 
-    public float angle = 0f;
-
     public float max_fuel = 5f;
 
     public Vector3 shakeAmplidtude;
@@ -61,11 +59,13 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if(disabled) {return;}
-        angle += Input.GetAxis("Horizontal") * ang_speed;
-        Quaternion player_rot = Quaternion.AngleAxis(Input.GetAxis("Horizontal") * ang_speed, body.position);
+        float current_rot_speed = (holder.currentState == PlayerHolding.HoldingState.Spaceship ? ang_speed * 0.5f : ang_speed);
+        float angle = Input.GetAxis("Horizontal") * current_rot_speed * Time.deltaTime;
+        Quaternion player_rot = Quaternion.AngleAxis(angle, body.position);
         Quaternion orientation = Quaternion.FromToRotation(body.up, body.position);
         body.rotation = player_rot * orientation * body.rotation;
-        Vector3 move_displacement = body.forward * Time.deltaTime * (holder.currentState == PlayerHolding.HoldingState.Spaceship ? carryingSpeed : speed) * Input.GetAxis("Vertical");
+        float currentSpeed = (holder.currentState == PlayerHolding.HoldingState.Spaceship ? carryingSpeed : speed);
+        Vector3 move_displacement = body.forward * Time.deltaTime * currentSpeed * Input.GetAxis("Vertical");
         body.position = Vector3.Normalize(body.position - move_displacement);
 
         Quaternion toward_body_quat = body.rotation;
