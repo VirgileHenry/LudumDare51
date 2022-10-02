@@ -12,12 +12,16 @@ public class PlayerController : MonoBehaviour
     public float ang_speed = 1f;
 
     public float angle = 0f;
+
+    public float max_fuel = 5f;
     
     [Range(0, 1)]
     public float mvt_responsivity = 1f;
     
     public Vector2 camera_pos_offset = new Vector2(0, 0);
     public Vector2 camera_rot_offset = new Vector2(0, 0);
+
+    public float fuel_qte = 0f;
 
     private Rigidbody player_rigidbody;
     private Transform body;
@@ -57,6 +61,26 @@ public class PlayerController : MonoBehaviour
             camera_desired_pos,
             mvt_responsivity
         );
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        SpaceshipPart spaceship;
+        Debug.Log("oui");
+        if (other.TryGetComponent<SpaceshipPart>(out spaceship))
+        {
+            if (spaceship.part == 15)
+            {
+                float previous_fuel_qte = fuel_qte;
+                fuel_qte = Mathf.Max(fuel_qte - Time.deltaTime, 0f);
+                spaceship.refill(previous_fuel_qte - fuel_qte);
+            }
+        }
+        else
+        {
+            fuel_qte = Mathf.Min(fuel_qte+ Time.deltaTime, max_fuel);
+        }
+
     }
 
 }

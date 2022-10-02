@@ -6,6 +6,8 @@ public class SpaceshipPart : MonoBehaviour
 {
     public int part;
 
+    public float fuel;
+
     public void Combine(SpaceshipPart other) {
         other.transform.SetParent(transform);
         other.transform.localPosition = Vector3.zero;
@@ -15,6 +17,11 @@ public class SpaceshipPart : MonoBehaviour
         if(part >= 15) {
             SpaceshipComplete();
         }
+    }
+
+    public void refill(float amount)
+    {
+        fuel += amount;
     }
 
     private void SpaceshipComplete() {
