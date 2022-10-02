@@ -37,14 +37,13 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(body.position.magnitude);
 
         angle += Input.GetAxis("Horizontal") * ang_speed;
         Quaternion player_rot = Quaternion.AngleAxis(Input.GetAxis("Horizontal") * ang_speed, body.position);
         Quaternion orientation = Quaternion.FromToRotation(body.up, body.position);
         body.rotation = player_rot * orientation * body.rotation;
         Vector3 move_displacement = body.forward * Time.deltaTime * speed * Input.GetAxis("Vertical");
-        body.position = Vector3.Normalize(body.position - move_displacement) * .5f;
+        body.position = Vector3.Normalize(body.position - move_displacement);
 
         Quaternion toward_body_quat = body.rotation;
         Quaternion offset_quat = Quaternion.AngleAxis(camera_rot_offset.x, body.right);

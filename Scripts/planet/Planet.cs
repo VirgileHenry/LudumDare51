@@ -10,6 +10,7 @@ public class Planet : MonoBehaviour
     // prefabs
     public GameObject rockPrefab;
     public GameObject geyserPrefab;
+    public GameObject[] spaceshipPrefabs;
 
     public static Planet instance;
 
@@ -80,6 +81,26 @@ public class Planet : MonoBehaviour
         foreach(PlanetTile tile in tiles) {
             tile.GenerateTile(planetMaterial, undergroundMaterial);
         }
+
+        // generate the spaceship !
+        foreach (GameObject spaceshipPartPrefab in spaceshipPrefabs)
+        {
+            GameObject spaceshipPart = Instantiate(spaceshipPartPrefab);
+            PlanetTile tile = tiles[Random.Range(0, tiles.Length)];
+            while(tile.tileObj != TileGameObject.None) {
+                tile = tiles[Random.Range(0, tiles.Length)];
+            }
+            tile.tileObj = TileGameObject.Spaceship;
+            Vector3 center = ((tile.coordinates.v1 + tile.coordinates.v2 + tile.coordinates.v3) / 3f) * 1.005f; // slightly elevated
+            float a = Random.Range(0f, 1f);
+            float b = Random.Range(0f, 1-a);
+            float c = 1 - a - b;
+            Vector3 randomForward = (a * tile.coordinates.v1 + b * tile.coordinates.v2 + c * tile.coordinates.v3) - center;
+            Vector3 up = (tile.coordinates.v1 + tile.coordinates.v2 + tile.coordinates.v3).normalized;
+            spaceshipPart.transform.position = center;
+            spaceshipPart.transform.rotation = Quaternion.LookRotation(randomForward, up);
+
+        }
     }
 
     public void UpdateTilesStates() {
@@ -140,7 +161,7 @@ public enum TileState {
 public enum TileGameObject {
     None,
     Geyser,
-    SpaceShip,
+    Spaceship,
 }
 
 // a tile of a planet
