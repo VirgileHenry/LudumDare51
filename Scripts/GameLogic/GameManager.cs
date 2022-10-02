@@ -72,6 +72,8 @@ public class GameManager : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+        gameUiPanel.SetActive(false);
+        spaceshipPanel.SetActive(false);
         // handle defeat
         if(currentState == GameState.Defeat) {
             // todo : cutscene !

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5992232054611499420}
   - component: {fileID: 3103719404769415517}
   - component: {fileID: 4996741812137208534}
+  - component: {fileID: 6274614937939668918}
   m_Layer: 7
   m_Name: Geyser
   m_TagString: Untagged
@@ -98,6 +99,21 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.0909707
   m_Center: {x: 0.017259993, y: 0.014541894, z: 0.01641678}
+--- !u!114 &6274614937939668918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6662146939908157031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebb2a28bb46ed8f47a842efed406d36d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particles: {fileID: 8957725314949893061}
+  collider: {fileID: 4996741812137208534}
+  active: 0
 --- !u!1 &7036296605217502967
 GameObject:
   m_ObjectHideFlags: 0
