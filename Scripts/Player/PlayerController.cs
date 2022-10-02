@@ -8,7 +8,16 @@ public class PlayerController : MonoBehaviour
 {
 
     public float speed = 1f;
+    public float ang_speed = 1f;
     public float gravity_intensity = 1f;
+
+    public float angle = 0f;
+    
+    [Range(0, 1)]
+    public float mvt_responsivity = 1f;
+    [Range(0, 1)]
+    public float rot_responsivity = 1f;
+    
     public Vector2 camera_pos_offset = new Vector2(0, 0);
     public Vector2 camera_rot_offset = new Vector2(0, 0);
 
@@ -28,26 +37,27 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Update Player transform (gravity + mvt)
-        Vector3 position = Vector3.Normalize(body.position);
+        Debug.Log(body.position.magnitude);
 
-        Vector3 moveForce = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
-        Quaternion rotate_quat = Quaternion.FromToRotation(Vector3.forward, position);
-        moveForce = rotate_quat * moveForce;
+        angle += Input.GetAxis("Horizontal") * ang_speed;
+        Quaternion player_rot = Quaternion.AngleAxis(Input.GetAxis("Horizontal") * ang_speed, body.position);
+        Quaternion orientation = Quaternion.FromToRotation(body.up, body.position);
+        body.rotation = player_rot * orientation * body.rotation;
+        Vector3 move_displacement = body.forward * Time.deltaTime * speed * Input.GetAxis("Vertical");
+        body.position = Vector3.Normalize(body.position - move_displacement) * .5f;
 
-        player_rigidbody.AddForce(speed * moveForce - gravity_intensity * position, ForceMode.Force);
-
-        Quaternion orientation = Quaternion.FromToRotation(Vector3.up, position);
-        body.transform.rotation = orientation;
-
-        // Update Camera transform
         Quaternion toward_body_quat = body.rotation;
         Quaternion offset_quat = Quaternion.AngleAxis(camera_rot_offset.x, body.right);
-        Quaternion anti_offset_quat = Quaternion.AngleAxis(-body.rotation.y, body.up);
 
-        Camera.rotation = Quaternion.AngleAxis(180f, body.up) * offset_quat * anti_offset_quat * toward_body_quat;
+        Camera.rotation = Quaternion.AngleAxis(180f, body.up) * offset_quat * toward_body_quat;
 
-        Camera.position = position + camera_pos_offset.x * Camera.forward + camera_pos_offset.y * Camera.up;
+        Vector3 camera_desired_pos = body.position + camera_pos_offset.x * Camera.forward + camera_pos_offset.y * Camera.up;
 
+        Camera.position = Vector3.Lerp(
+            Camera.position,
+            camera_desired_pos,
+            mvt_responsivity
+        );
     }
+
 }
