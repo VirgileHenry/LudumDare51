@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     private void Start() {
         currentState = GameState.Menu;
-        // StartGame();
+        StartGame();
     }
 
     public void StartGame() {
@@ -37,9 +37,11 @@ public class GameManager : MonoBehaviour
         while(currentState == GameState.Playing) {
             // wait 10 sec ! (this is the game jam theme, I mean...)
             timer += Time.deltaTime;
-
-            // handle planet tile collapse
-            Planet.instance.UpdateTilesStates();
+            if(timer > 10) {
+                timer = 0;
+                // handle planet tile collapse
+                Planet.instance.UpdateTilesStates();
+            }
 
             yield return new WaitForEndOfFrame();
         }

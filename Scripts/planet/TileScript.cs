@@ -6,16 +6,22 @@ public class TileScript : MonoBehaviour
 {
 
     private TileState currentState;
-    private Quaternion defaultRotation;
     private float shakingTimer;
-    public float shakingStrength = 5;
+    public float shakingStrength = 10;
     public float shakingSpeed = 5;
+    public float elevationStrength = 0.06f;
+    public float randomOffset;
+    private Vector3 normal;
+
+    public void SetNormal(Vector3 normal) {
+        this.normal = normal;
+    }
 
     private void Start()
     {
         currentState = TileState.Alive;
-        defaultRotation = transform.rotation;
-        shakingTimer = 0;   
+        shakingTimer = 0;
+        randomOffset = Random.Range(0f, 1000f);
     }
 
     public void Shake() {
@@ -24,17 +30,17 @@ public class TileScript : MonoBehaviour
 
     public void Collapse() {
         currentState = TileState.Collapsed;
-        StartCoroutine(Collapse(0.5f));
+        StartCoroutine(CollapseCoroutine(0.5f));
     }
 
-    private IEnumerator Collapse(float duration) {
+    private IEnumerator CollapseCoroutine(float duration) {
         float timer = 0;
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos * 0.5f;
+        Vector3 startPos = Vector3.zero;
+        Vector3 targetPos = -normal * 0.5f;
         while(timer < duration) {
             transform.position = startPos + (timer / duration) * (targetPos - startPos);
 
-            duration += Time.deltaTime;
+            timer += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
         transform.position = targetPos;
@@ -44,7 +50,8 @@ public class TileScript : MonoBehaviour
         switch(currentState) {
             case TileState.Shaking:
                 shakingTimer += Time.deltaTime * shakingSpeed;
-                transform.rotation = defaultRotation * Quaternion.AngleAxis((Mathf.PerlinNoise(shakingTimer, 0) - 0.5f) * shakingStrength, transform.up);
+                transform.rotation = Quaternion.AngleAxis((Mathf.PerlinNoise(randomOffset + shakingTimer, 0) - 0.5f) * shakingStrength, normal);
+                transform.position = normal * elevationStrength * (Mathf.PerlinNoise(randomOffset + shakingTimer, 0) - 0.5f);
                 break;
             default:
                 break;

@@ -87,7 +87,9 @@ public class Planet : MonoBehaviour
             switch (tile.state)
             {
                 case TileState.Alive:
-                    alive.Add(tile);
+                    if(tile.tileObj == TileGameObject.None) {
+                        alive.Add(tile);
+                    }
                     break;
                 case TileState.Shaking:
                     tile.Collapse();
@@ -97,8 +99,14 @@ public class Planet : MonoBehaviour
             }
             // find new tiles to shake
         }
-        foreach(PlanetTile tile in alive) {
-            tile.Shake();
+
+        for(int i = 0; i < 6; i++) {
+            if(alive.Count == 0) {
+                break; // nothing to shake !
+            }
+            int indexToShake = Random.Range(0, alive.Count);
+            alive[indexToShake].Shake();
+            alive.RemoveAt(indexToShake);
         }
     }
 
@@ -168,12 +176,12 @@ public class PlanetTile
 
     public void GenerateTile(Material material) {
         tileGameObject = new GameObject();
-        tileGameObject.name = "debug triangle";
+        tileGameObject.name = "Planet Tile";
         MeshFilter filter = tileGameObject.AddComponent<MeshFilter>();
         tileGameObject.AddComponent<MeshRenderer>().material = material;
-        tileGameObject.AddComponent<TileScript>();
-        Mesh mesh = new Mesh();
         Vector3 normal = (coordinates.v1 + coordinates.v2 + coordinates.v3).normalized;
+        tileGameObject.AddComponent<TileScript>().SetNormal(normal);
+        Mesh mesh = new Mesh();
         mesh.vertices = new Vector3[6] {
             coordinates.v1,
             coordinates.v2,
