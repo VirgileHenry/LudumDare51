@@ -28,6 +28,11 @@ public class PlayerController : MonoBehaviour
     private Transform Camera;
     private PlayerHolding holder;
 
+    public Transform[] deathChecker;
+    public float deatRaycastDistance = 0.1f;
+
+    public bool disabled;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,12 +41,14 @@ public class PlayerController : MonoBehaviour
         body = this.transform.Find("Body");
         player_rigidbody = body.GetComponent<Rigidbody>();
         holder = this.GetComponent<PlayerHolding>();
+
+        disabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if(disabled) {return;}
         angle += Input.GetAxis("Horizontal") * ang_speed;
         Quaternion player_rot = Quaternion.AngleAxis(Input.GetAxis("Horizontal") * ang_speed, body.position);
         Quaternion orientation = Quaternion.FromToRotation(body.up, body.position);
@@ -61,12 +68,23 @@ public class PlayerController : MonoBehaviour
             camera_desired_pos,
             mvt_responsivity
         );
+
+        // check for death
+        bool alive = false;
+        foreach(Transform startRay in deathChecker) {
+            if(Physics.Raycast(startRay.position, -startRay.position, deatRaycastDistance, 1 << 9)) {
+                alive = true;
+                break;
+            }
+        }
+        if(!alive) {
+            StartCoroutine(PlayerDeath());
+        }
     }
 
     private void OnTriggerStay(Collider other)
     {
         SpaceshipPart spaceship;
-        Debug.Log("oui");
         if (other.TryGetComponent<SpaceshipPart>(out spaceship))
         {
             if (spaceship.part == 15)
@@ -81,6 +99,46 @@ public class PlayerController : MonoBehaviour
             fuel_qte = Mathf.Min(fuel_qte+ Time.deltaTime, max_fuel);
         }
 
+        GameManager.instance.fuelBar.Set(fuel_qte / 5.0f);
+
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        SpaceshipPart spaceship;
+        if (other.TryGetComponent<SpaceshipPart>(out spaceship))
+        {
+            if (spaceship.part == 15)
+            {
+                GameManager.instance.spaceshipPanel.SetActive(true);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        SpaceshipPart spaceship;
+        if (other.TryGetComponent<SpaceshipPart>(out spaceship))
+        {
+            if (spaceship.part == 15)
+            {
+                GameManager.instance.spaceshipPanel.SetActive(false);
+            }
+        }
+    }
+
+    private IEnumerator PlayerDeath() {
+        disabled = true;
+        float duration = 2f;
+        float timer = 0f;
+        Vector3 position = body.position;
+        while(timer < duration) {
+            float x = timer / duration;
+            float t = -2 * x * x + x + 1;
+            body.position = position * t;
+            timer += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        GameManager.instance.PlayerDefeat();
+    }
 }

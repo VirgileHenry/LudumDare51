@@ -33,7 +33,7 @@ public class PlayerHolding : MonoBehaviour
         switch(currentState) {
             case HoldingState.Empty:
                 // try to grab something !
-                foreach(Collider collider in Physics.OverlapSphere(holdingSpot.position, grabRadius, 1 << 8)) {
+                foreach(Collider collider in Physics.OverlapSphere(holdingSpot.position, grabRadius, 1 << 8, QueryTriggerInteraction.Collide)) {
                     collider.gameObject.transform.SetParent(holdingSpot);
                     collider.gameObject.transform.localPosition = Vector3.zero;
                     collider.gameObject.GetComponent<SphereCollider>().enabled = false;
@@ -48,7 +48,7 @@ public class PlayerHolding : MonoBehaviour
     private void TriggerReleased() {
         switch(currentState) {
             case HoldingState.Spaceship:
-                Collider[] colliders = Physics.OverlapSphere(holdingSpot.position, grabRadius, 1 << 8);
+                Collider[] colliders = Physics.OverlapSphere(holdingSpot.position, grabRadius, 1 << 8, QueryTriggerInteraction.Collide);
                 if(colliders.Length > 0) {
                     // combine spaceships
                     GameObject spaceship = colliders[0].gameObject;

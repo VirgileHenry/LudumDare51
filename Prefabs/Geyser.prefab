@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5992232054611499420}
   - component: {fileID: 3103719404769415517}
   - component: {fileID: 4996741812137208534}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Geyser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 4946427496073015730}
   - component: {fileID: 8957725314949893061}
   - component: {fileID: 3186419376470294046}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}

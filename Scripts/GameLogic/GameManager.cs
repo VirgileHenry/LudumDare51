@@ -21,11 +21,14 @@ public class GameManager : MonoBehaviour
 
     public GameObject victoryScreen;
     public GameObject defeatScreen;
+    public GameObject gameUiPanel;
 
     public static GameManager instance;
 
     public Bar fuelBar;
     public Bar sismicBar;
+    public Bar spaceshipBar;
+    public GameObject spaceshipPanel;
 
     private void Awake() {
         if(instance == null) {
@@ -35,9 +38,13 @@ public class GameManager : MonoBehaviour
 
     private void Start() {
         currentState = GameState.Menu;
+        
     }
 
     public void StartGame() {
+        fuelBar.Set(0);
+        sismicBar.Set(0);
+        spaceshipBar.Set(0);
         StartCoroutine(MainGameLoop());
     }
 
@@ -70,6 +77,7 @@ public class GameManager : MonoBehaviour
             Destroy(player);
             menuCamera.enabled = true;
             defeatScreen.SetActive(true);
+            gameUiPanel.SetActive(false);
         }
 
         // handle victory
@@ -78,6 +86,7 @@ public class GameManager : MonoBehaviour
             Destroy(player);
             menuCamera.enabled = true;
             victoryScreen.SetActive(true);
+            gameUiPanel.SetActive(false);
         }
     }
 

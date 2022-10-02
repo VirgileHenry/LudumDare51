@@ -30,7 +30,7 @@ public class TileScript : MonoBehaviour
 
     public void Collapse() {
         currentState = TileState.Collapsed;
-        StartCoroutine(CollapseCoroutine(0.5f));
+        StartCoroutine(CollapseCoroutine(1.5f));
     }
 
     private IEnumerator CollapseCoroutine(float duration) {

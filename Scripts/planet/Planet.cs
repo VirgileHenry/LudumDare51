@@ -233,6 +233,8 @@ public class PlanetTile
             0, 1, 2,
         };
         filter.mesh = mesh;
+        tileGameObject.AddComponent<MeshCollider>().sharedMesh = mesh;
+        tileGameObject.layer = 9;
         // different mesh for the ground
         GameObject groundObj = new GameObject();
         groundObj.transform.SetParent(tileGameObject.transform);
