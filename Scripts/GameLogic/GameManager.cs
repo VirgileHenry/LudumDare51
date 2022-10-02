@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
             timer += Time.deltaTime;
             if(timer > 10) {
                 timer = 0;
+                player.GetComponent<PlayerController>().ShakeCamera();
                 // handle planet tile collapse
                 Planet.instance.UpdateTilesStates();
             }

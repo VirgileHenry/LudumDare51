@@ -176,9 +176,14 @@ MonoBehaviour:
   carryingSpeed: 0.15
   ang_speed: 1
   angle: 0
+  max_fuel: 5
+  shakeAmplidtude: {x: 20, y: 50, z: 60}
+  shakeDuration: 0.3
+  shakeSpeed: 15
   mvt_responsivity: 0.5
   camera_pos_offset: {x: -0.4, y: 0}
   camera_rot_offset: {x: 60, y: 0}
+  fuel_qte: 0
 --- !u!114 &4095561247261025761
 MonoBehaviour:
   m_ObjectHideFlags: 0
