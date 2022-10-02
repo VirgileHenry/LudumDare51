@@ -81,11 +81,7 @@ public class Planet : MonoBehaviour
         }
     }
 
-    public void Update() {
-
-    }
-
-    public void UpdateTilesStates(int newFallingTileNumber) {
+    public void UpdateTilesStates() {
         List<PlanetTile> alive = new List<PlanetTile>();
         foreach(PlanetTile tile in tiles) {
             switch (tile.state)
@@ -99,18 +95,10 @@ public class Planet : MonoBehaviour
                 case TileState.Collapsed:
                     break;
             }
+            // find new tiles to shake
         }
-    }
-
-    private IEnumerator CollapseAnimation(PlanetTile tile, float duration) {
-        float timer = 0;
-        Vector3 oldPos = tile.tileGameObject.transform.position;
-        Vector3 targetPos = (tile.coordinates.v1 + tile.coordinates.v1 + tile.coordinates.v1).normalized * 0.5f;
-        while(timer < duration) {
-            tile.tileGameObject.transform.position = oldPos + (timer / duration) * (targetPos - oldPos);
-
-            duration += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
+        foreach(PlanetTile tile in alive) {
+            tile.Shake();
         }
     }
 
@@ -183,6 +171,7 @@ public class PlanetTile
         tileGameObject.name = "debug triangle";
         MeshFilter filter = tileGameObject.AddComponent<MeshFilter>();
         tileGameObject.AddComponent<MeshRenderer>().material = material;
+        tileGameObject.AddComponent<TileScript>();
         Mesh mesh = new Mesh();
         Vector3 normal = (coordinates.v1 + coordinates.v2 + coordinates.v3).normalized;
         mesh.vertices = new Vector3[6] {
@@ -244,18 +233,17 @@ public class PlanetTile
             geyser.transform.position = center;
             geyser.transform.rotation = Quaternion.LookRotation(randomForward, up);
             geyser.transform.SetParent(tileGameObject.transform, true);
-
         }
-
-
     }
 
     public void Collapse() {
         state = TileState.Collapsed;
+        tileGameObject.GetComponent<TileScript>().Collapse();
     }
 
-    public void Update() {
-
+    public void Shake() {
+        state = TileState.Shaking;
+        tileGameObject.GetComponent<TileScript>().Shake();
     }
 
 

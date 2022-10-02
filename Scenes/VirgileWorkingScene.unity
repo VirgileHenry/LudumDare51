@@ -168,6 +168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planetMaterial: {fileID: 2100000, guid: f48fed0f79ba2b247be5148e03053794, type: 2}
+  rockPrefab: {fileID: 8284215524886553370, guid: 68f7f46cc61296246ad3fdc96143acf2, type: 3}
+  geyserPrefab: {fileID: 6662146939908157031, guid: 40a4eb57b277ea344be8400dfe664142, type: 3}
 --- !u!1 &1502977124
 GameObject:
   m_ObjectHideFlags: 0
