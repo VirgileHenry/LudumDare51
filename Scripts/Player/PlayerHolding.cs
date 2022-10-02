@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class PlayerHolding : MonoBehaviour
 {
-    enum HoldingState {
+    public enum HoldingState {
         Empty,
         Spaceship,
     }
 
-    HoldingState currentState;
+    public HoldingState currentState;
     public Transform holdingSpot;
     public float grabRadius = 0.05f;
     GameObject holdedObject;

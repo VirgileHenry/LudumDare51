@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 {
 
     public float speed = 1f;
+    public float carryingSpeed = 1f;
     public float ang_speed = 1f;
 
     public float angle = 0f;
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody player_rigidbody;
     private Transform body;
     private Transform Camera;
+    private PlayerHolding holder;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +31,7 @@ public class PlayerController : MonoBehaviour
 
         body = this.transform.Find("Body");
         player_rigidbody = body.GetComponent<Rigidbody>();
+        holder = this.GetComponent<PlayerHolding>();
     }
 
     // Update is called once per frame
@@ -39,7 +42,7 @@ public class PlayerController : MonoBehaviour
         Quaternion player_rot = Quaternion.AngleAxis(Input.GetAxis("Horizontal") * ang_speed, body.position);
         Quaternion orientation = Quaternion.FromToRotation(body.up, body.position);
         body.rotation = player_rot * orientation * body.rotation;
-        Vector3 move_displacement = body.forward * Time.deltaTime * speed * Input.GetAxis("Vertical");
+        Vector3 move_displacement = body.forward * Time.deltaTime * (holder.currentState == PlayerHolding.HoldingState.Spaceship ? carryingSpeed : speed) * Input.GetAxis("Vertical");
         body.position = Vector3.Normalize(body.position - move_displacement);
 
         Quaternion toward_body_quat = body.rotation;
