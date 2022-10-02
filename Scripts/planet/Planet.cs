@@ -5,7 +5,8 @@ using UnityEngine;
 public class Planet : MonoBehaviour
 {
     PlanetTile[] tiles;
-    public Material planetMaterial; 
+    public Material planetMaterial;
+    public Material undergroundMaterial;
     // prefabs
     public GameObject rockPrefab;
     public GameObject geyserPrefab;
@@ -77,7 +78,7 @@ public class Planet : MonoBehaviour
         }
         
         foreach(PlanetTile tile in tiles) {
-            tile.GenerateTile(planetMaterial);
+            tile.GenerateTile(planetMaterial, undergroundMaterial);
         }
     }
 
@@ -174,7 +175,7 @@ public class PlanetTile
         return $"{coordinates.v1} {coordinates.v2} {coordinates.v3}";
     }
 
-    public void GenerateTile(Material material) {
+    public void GenerateTile(Material material, Material groundMaterial) {
         tileGameObject = new GameObject();
         tileGameObject.name = "Planet Tile";
         MeshFilter filter = tileGameObject.AddComponent<MeshFilter>();
@@ -182,7 +183,25 @@ public class PlanetTile
         Vector3 normal = (coordinates.v1 + coordinates.v2 + coordinates.v3).normalized;
         tileGameObject.AddComponent<TileScript>().SetNormal(normal);
         Mesh mesh = new Mesh();
-        mesh.vertices = new Vector3[6] {
+        mesh.vertices = new Vector3[3] {
+            coordinates.v1,
+            coordinates.v2,
+            coordinates.v3,
+        };
+        mesh.normals = new Vector3[3] {
+            (coordinates.v1).normalized,
+            (coordinates.v2).normalized,
+            (coordinates.v3).normalized,
+        };
+        mesh.triangles = new int[3] {
+            0, 1, 2,
+        };
+        filter.mesh = mesh;
+        // different mesh for the ground
+        GameObject groundObj = new GameObject();
+        groundObj.transform.SetParent(tileGameObject.transform);
+        Mesh groundMesh = new Mesh();
+        groundMesh.vertices = new Vector3[6] {
             coordinates.v1,
             coordinates.v2,
             coordinates.v3,
@@ -190,16 +209,7 @@ public class PlanetTile
             coordinates.v2 * 0.5f,
             coordinates.v3 * 0.5f,
         };
-        mesh.normals = new Vector3[6] {
-            (coordinates.v1).normalized,
-            (coordinates.v2).normalized,
-            (coordinates.v3).normalized,
-            (coordinates.v1 * 0.5f).normalized,
-            (coordinates.v2 * 0.5f).normalized,
-            (coordinates.v3 * 0.5f).normalized,
-        };
-        mesh.triangles = new int[21] {
-            0, 1, 2,
+        groundMesh.triangles = new int[18] {
             0, 3, 1,
             3, 4, 1,
             2, 1, 4,
@@ -207,7 +217,8 @@ public class PlanetTile
             0, 2, 3,
             2, 5, 3
         };
-        filter.mesh = mesh;
+        groundObj.AddComponent<MeshFilter>().mesh = groundMesh;
+        groundObj.AddComponent<MeshRenderer>().material = groundMaterial;
         // add artifacts rocks
         int rockNumber = new int[5]{0, 1, 1, 2, 4}[Random.Range(0, 5)];
 
